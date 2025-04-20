@@ -50,7 +50,7 @@ Game.updateGrimoire = 0;
 
 Game.registerMod("CYOC", {
 	init: function () {
-		Game.LoadMod("PFP.js");
+		Game.LoadMod("https://glander.club/asjs/qdNgUW9y");
 		var ModStylesheet = document.createElement("link");
 		ModStylesheet.setAttribute("href", "ModStyle.css");
 		ModStylesheet.type = 'text/css';
