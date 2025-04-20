@@ -589,7 +589,7 @@ Game.registerMod("CYOC", {
 				if (!this.spawned && me.force != 'cookie storm drop' && Game.chimeType != 0 && Game.ascensionMode != 1) Game.playGoldenCookieChime();
 
 				// set image
-				var bgPic = Game.resPath + 'img/blackCookie.png';
+				var bgPic = Game.resPath + 'https://bestccmodder.github.io/package-6784-mangement/img/blackCookie.png';
 				var picX = 0; var picY = 0;
 
 				me.x = Math.floor(Math.random() * Math.max(0, (Game.bounds.right - 300) - Game.bounds.left - 128) + Game.bounds.left + 64) - 64;
@@ -669,56 +669,56 @@ Game.registerMod("CYOC", {
 		}
 
 		// define audio captcha
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha1.mp3', 'bruh');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha2.mp3', 'are you even listening to me');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha3.mp3', 'skill issue');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha4.mp3', 'you are bad at this game');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha5.mp3', 'bad');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha6.mp3', 'book');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha7.mp3', 'very good');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha8.mp3', 'i dont know what to say right now');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha9.mp3', 'random');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha10.mp3', 'cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha11.mp3', 'go to sleep');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha12.mp3', 'voice reveal');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha13.mp3', 'imagine playing cc');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha14.mp3', 'car');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha15.mp3', 'real');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha16.mp3', 'hello');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha17.mp3', 'you missed a golden cookie');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha18.mp3', 'ground');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha19.mp3', 'fork');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha20.mp3', 'yes');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha21.mp3', 'no');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha22.mp3', 'huh');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha23.mp3', 'menu');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha24.mp3', 'start');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha25.mp3', 'end');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha26.mp3', 'finish');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha27.mp3', 'water');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha28.mp3', 'red');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha29.mp3', 'blue');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha30.mp3', 'yellow');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha31.mp3', 'are you still playing');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha32.mp3', 'budget');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha33.mp3', 'the matrix');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha34.mp3', 'example');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha35.mp3', 'bag');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha36.mp3', 'you are winner'); // never lose a race again! you are always winner
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha37.mp3', 'food');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha38.mp3', 'you should play cookieclysm');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha39.mp3', 'peanut butter cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha40.mp3', 'round british tea biscuits');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha41.mp3', 'cream cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha42.mp3', 'css sucks');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha43.mp3', 'big chips cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha44.mp3', 'gold');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha45.mp3', 'maple cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha46.mp3', 'butter cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha47.mp3', 'wrath cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha48.mp3', 'waffle cookies');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha49.mp3', 'green');
-		new Game.audioCaptcha('audioCaptcha/audioCaptcha50.mp3', 'are you having fun');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha1.mp3', 'bruh');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha2.mp3', 'are you even listening to me');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha3.mp3', 'skill issue');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha4.mp3', 'you are bad at this game');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha5.mp3', 'bad');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha6.mp3', 'book');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha7.mp3', 'very good');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha8.mp3', 'i dont know what to say right now');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha9.mp3', 'random');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha10.mp3', 'cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha11.mp3', 'go to sleep');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha12.mp3', 'voice reveal');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha13.mp3', 'imagine playing cc');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha14.mp3', 'car');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha15.mp3', 'real');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha16.mp3', 'hello');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha17.mp3', 'you missed a golden cookie');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha18.mp3', 'ground');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha19.mp3', 'fork');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha20.mp3', 'yes');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha21.mp3', 'no');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha22.mp3', 'huh');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha23.mp3', 'menu');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha24.mp3', 'start');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha25.mp3', 'end');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha26.mp3', 'finish');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha27.mp3', 'water');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha28.mp3', 'red');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha29.mp3', 'blue');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha30.mp3', 'yellow');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha31.mp3', 'are you still playing');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha32.mp3', 'budget');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha33.mp3', 'the matrix');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha34.mp3', 'example');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha35.mp3', 'bag');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha36.mp3', 'you are winner'); // never lose a race again! you are always winner
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha37.mp3', 'food');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha38.mp3', 'you should play cookieclysm');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha39.mp3', 'peanut butter cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha40.mp3', 'round british tea biscuits');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha41.mp3', 'cream cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha42.mp3', 'css sucks');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha43.mp3', 'big chips cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha44.mp3', 'gold');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha45.mp3', 'maple cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha46.mp3', 'butter cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha47.mp3', 'wrath cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha48.mp3', 'waffle cookies');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha49.mp3', 'green');
+		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha50.mp3', 'are you having fun');
 
 		setInterval(function () {
 			if (Game.hasBadge('The voices')) PlaySound("audioCaptcha/babyShark.mp3");
