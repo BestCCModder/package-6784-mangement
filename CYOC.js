@@ -721,7 +721,7 @@ Game.registerMod("CYOC", {
 		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha50.mp3', 'are you having fun');
 
 		setInterval(function () {
-			if (Game.hasBadge('The voices')) PlaySound("audioCaptcha/babyShark.mp3");
+			if (Game.hasBadge('The voices')) PlaySound("https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/babyShark.mp3");
 			console.log("code running");
 		}, 96400);
 
