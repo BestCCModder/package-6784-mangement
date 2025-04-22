@@ -36,13 +36,11 @@ var PlaySound = function (url, vol, pitchVar) {
 			sound.playbackRate = rate;
 		}
 		try { sound.play(); } catch (e) { }
-		/*
-		var sound=Sounds[url].cloneNode();
-		sound.volume=Math.pow(volume*volumeSetting/100,2);
-		sound.onended=function(e){if (e.target){delete e.target;}};
-		sound.play();*/
 	}
 }
+
+Game.debugCYOC = 1;
+
 Game.updateGarden = 0;
 Game.updateBank = 0;
 Game.updateTemple = 0;
@@ -51,11 +49,14 @@ Game.updateGrimoire = 0;
 Game.registerMod("CYOC", {
 	init: function () {
 		Game.LoadMod("https://glander.club/asjs/qdNgUW9y");
+
 		var ModStylesheet = document.createElement("link");
 		ModStylesheet.setAttribute("href", "ModStyle.css");
 		ModStylesheet.type = 'text/css';
 		ModStylesheet.rel = 'stylesheet';
 		document.head.appendChild(ModStylesheet);
+
+		img = "https://bestccmodder.github.io/package-6784-mangement/img/cyocIcons.png";
 
 		LocalizeUpgradesAndAchievs = () => {
 			if (!Game.UpgradesById) return false;
@@ -163,7 +164,7 @@ Game.registerMod("CYOC", {
 			if (Game.sesame) {
 				if (Game.debuggedUpgradeCpS[me.name] || Game.debuggedUpgradeCpClick[me.name]) {
 					text.push('x' + Beautify(1 + Game.debuggedUpgradeCpS[me.name], 2)); text.push(Game.debugColors[Math.floor(Math.max(0, Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpS[me.name] / 2, 0.5) * Game.debugColors.length)))]);
-					text.push('x' + Beautify(1 + Game.debuggedUpgradeCpClick[me.name], 2)); text.push(Game.debugColors[Math.floor(Math.max(0, Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpClick[me.name] / 2, 0.5) * Game.debugColors.length)))]);
+					text.push	('x' + Beautify(1 + Game.debuggedUpgradeCpClick[me.name], 2)); text.push(Game.debugColors[Math.floor(Math.max(0, Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpClick[me.name] / 2, 0.5) * Game.debugColors.length)))]);
 				}
 				if (Game.extraInfo) { text.push(Math.floor(me.order) + (me.power ? '<br>P:' + me.power : '')); text.push('#fff'); }
 			}
@@ -324,7 +325,7 @@ Game.registerMod("CYOC", {
 				tagsStr +
 				'<div class="line"></div><div class="description">' + (mysterious ? '???' : desc) + '</div></div>' +
 				(tip != '' ? ('<div class="line"></div><div style="font-size:10px;font-weight:bold;color:#999;text-align:center;padding-bottom:4px;line-height:100%;" class="crateTip">' + tip + '</div>') : '') +
-				(Game.sesame ? ('<div style="font-size:9px;">Id: ' + me.id + ' | Order: ' + (me.order) + (me.tier ? ' | Tier: ' + me.tier : '') + ' | Icon: [' + me.icon[0] + ',' + me.icon[1] + ']' + '</div>') : '');
+				(Game.sesame ? ('<div style="font-size:9px;">Id: ' + me.id + ' | Order: ' + (me.order) + (me.tier ? ' | Tier: ' + me.tier : '') + ' | Icon: [' + me.icon[0] + ',' + me.icon[1] + ']' + '</div>') : (me.type == 'badge' ? '<div style="font-size:10px;">Value: ' + me.value + '</div>' : ''));
 		}
 
 		/*=====================================================================================
@@ -333,7 +334,7 @@ Game.registerMod("CYOC", {
 
 		// don't have a better name for these
 		Game.Badges = {};
-		Game.BadgesById = {};
+		Game.BadgesById = [];
 		Game.BadgesN = 0;
 		Game.BadgesOwned = 0;
 		Game.Badge = function (name, desc, icon) {
@@ -392,10 +393,18 @@ Game.registerMod("CYOC", {
 			}
 			else {
 				Game.removeBadge(this.name);
+				if (!Game.hasBadge(' ')) {[...Game.l.children].forEach(el => el.style.removeProperty('opacity'));}
 			}
 			if (Game.onMenu == 'stats') Game.UpdateMenu();
 			Game.selectChallange();
 		}
+
+		/*Game.GetIcon=function(type,tier)
+		{
+			var col=0;
+			if (type=='Kitten') col=18; else col=Game.Objects[type].iconColumn;
+			return [col,Game.Tiers[tier].iconRow];
+		}*/
 
 		Game.hasBadge = function (what) {
 			return (Game.Badges[what] ? Game.Badges[what].got : 0);
@@ -405,10 +414,14 @@ Game.registerMod("CYOC", {
 			Game.Objects[i].debuffBadges = [];
 		}
 
+		Game.getBuildingDebuffIcon=function(icon) {
+			return [icon, 3, img];
+		}
+
 		Game.badgeBuildingDebuff = function (name, desc, building, icon, icon1) {
-			let badge = new Game.Badge(name, desc, [icon, icon1]);
+			let badge = new Game.Badge(name, desc, Game.getBuildingDebuffIcon(icon));
 			if (!badge.buildingTie && building) badge.buildingTie = Game.Objects[building];
-			Game.Objects[building].debuffBadges.push(badge)
+			Game.Objects[building].debuffBadges.push(badge);
 			return badge;
 		}
 
@@ -430,12 +443,21 @@ Game.registerMod("CYOC", {
 			return mult;
 		}
 
+        Game.badgeValue = function () {
+			let value = 0
+			for (let i in Game.Badges) {
+				if (Game.Badges[i].got) value += Game.Badges[i].value;
+			}
+		    return value;
+		}
+		eval('Game.computeLumpTimes=' + Game.computeLumpTimes.toString().replace(`Game.lumpOverripeAge/=2000;}`, `Game.lumpOverripeAge/=2000;} Game.lumpRipeAge-=6000 * Game.badgeValue();`));
+
 		// define badges
 		// WARNING : do NOT add new badges in between, this breaks the saves. Add them at the end !
 
 		var order = 0; // this is used to set the order in which the items are listed
 
-		new Game.Badge('Broken hand', 'Clicking is 10% less powerfull', [0, 0]); // implemented
+		new Game.Badge('Broken hand', 'Clicking is 10% less powerful.', [0, 0]); // implemented
 		new Game.Badge('Clogged furnace', 'Cookie production multiplier <b>-10%</b>.', [0, 0]); // implemented
 		new Game.Badge('Black cookie', 'Every once in awhile a black cookie spawns, if not clicked all cookies in bank are removed.', [0, 0]); //implemented
 		new Game.Badge('Bad luck', 'Black cookies appear <b>twice as often</b>.', [0, 0]); // implemented
@@ -443,17 +465,17 @@ Game.registerMod("CYOC", {
 		new Game.Badge('Oops! All wrath', 'Every nat golden cookie is now wrath.', [0, 0]); Game.last.value = 7; // implemented
 		new Game.Badge('Gambler\'s fever nightmare', 'Removes <b>gambler\'s fever dream</b> from grimoire.<q>No gambling addiction :(</q>', [0, 0]); Game.last.value = 5 // implemented
 		new Game.Badge('Butterfingers', 'Can\'t get click frenzy and elder frenzy from Force the Hand of Fate.', [0, 0]); Game.last.value = 7; // implemented
-		Game.badgeBuildingDebuff('something', 'Divides the gain from Thousand fingers by <b>2</b>.', 'Cursor', [0, 0]);
-		Game.badgeBuildingDebuff('something1', 'Grandmas are <b>twice</b> as inefficient.', 'Grandma', [0, 0]);
-		Game.badgeBuildingDebuff('something2', 'Time machines are <b>twice</b> as inefficient.', 'Time machine', [0, 0]);
-		Game.badgeBuildingDebuff('something3', 'Antimatter condensers are <b>twice</b> as inefficient.', 'Antimatter condenser', [0, 0]);
-		Game.badgeBuildingDebuff('something4', 'Prisms are <b>twice</b> as inefficient.', 'Prism', [0, 0]);
-		Game.badgeBuildingDebuff('something5', 'Chancemakers are <b>twice</b> as inefficient.', 'Chancemaker', [0, 0]);
-		Game.badgeBuildingDebuff('something6', 'Fractal engines are <b>twice</b> as inefficient.', 'Fractal engine', [0, 0]);
-		Game.badgeBuildingDebuff('something7', 'Javascript consoles are <b>twice</b> as inefficient.', 'Javascript console', [0, 0]);
-		Game.badgeBuildingDebuff('something8', 'Idleverses are <b>twice</b> as inefficient.', 'Idleverse', [0, 0]);
-		Game.badgeBuildingDebuff('something9', 'Cortex bakers are <b>twice</b> as inefficient.', 'Cortex baker', [0, 0]);
-		Game.badgeBuildingDebuff('something10', 'You are <b>twice</b> as inefficient.', 'You', [0, 0]);
+		Game.badgeBuildingDebuff('something', 'Divides the gain from Thousand fingers by <b>2</b>.', 'Cursor', 0);
+		Game.badgeBuildingDebuff('something1', 'Grandmas are <b>twice</b> as inefficient.', 'Grandma', 1);
+		Game.badgeBuildingDebuff('something2', 'Time machines are <b>twice</b> as inefficient.', 'Time machine', 8);
+		Game.badgeBuildingDebuff('something3', 'Antimatter condensers are <b>twice</b> as inefficient.', 'Antimatter condenser', 13);
+		Game.badgeBuildingDebuff('something4', 'Prisms are <b>twice</b> as inefficient.', 'Prism', 14);
+		Game.badgeBuildingDebuff('something5', 'Chancemakers are <b>twice</b> as inefficient.', 'Chancemaker', 19);
+		Game.badgeBuildingDebuff('something6', 'Fractal engines are <b>twice</b> as inefficient.', 'Fractal engine', 20);
+		Game.badgeBuildingDebuff('something7', 'Javascript consoles are <b>twice</b> as inefficient.', 'Javascript console', 21);
+		Game.badgeBuildingDebuff('something8', 'Idleverses are <b>twice</b> as inefficient.', 'Idleverse', 22);
+		Game.badgeBuildingDebuff('something9', 'Cortex bakers are <b>twice</b> as inefficient.', 'Cortex baker', 23);
+		Game.badgeBuildingDebuff('something10', 'You are <b>twice</b> as inefficient.', 'You', 24);
 		new Game.Badge('The voices', 'Baby shark plays for the duration of the whole run. Every once in awhile an audio clip will play, failling to complete the captcha will result in you losing an upgrade ', [0, 0]); Game.last.value = 8; // implemented
 		new Game.Badge('Inflation', 'All upgrades are <b>10</b> more expensive.', [0, 0]); Game.last.value = 2; // implemented
 		new Game.Badge('something 11', 'Golden cookies only appear in <b>Christmas</b>, reindeer appear in <b>every season</b> instead.', [0, 0]); Game.last.value = 4; // implemented
@@ -491,7 +513,7 @@ Game.registerMod("CYOC", {
 			}
 
 			//PauseGame();
-			Game.Prompt('<h3>Pick a debuff</h3>' +
+			Game.Prompt('<h3>Pick an upgrade to make permanent</h3>' +
 				'<div class="line"></div><div style="margin:4px auto; clear:both; width:120px;"></div>' +
 				'<div class="block crateBox" style="overflow-y:scroll; float:left;clear:left;width:500px;padding:0px;height:250px;">' + badges + '</div>'
 				, [["Confirm", 'Game.ClosePrompt(); '], "Cancel"], 0, 'widePrompt');
@@ -770,6 +792,7 @@ Game.registerMod("CYOC", {
 		Game.registerHook('check', () => {
 			if (Game.Objects['Wizard tower'].minigameLoaded && !Game.updateGrimoire) {
 				if (Game.hasBadge('Gambler\'s fever nightmare')) { l('grimoireSpell6').style.display = "none"; }
+
 				let fthof = Game.Objects['Wizard tower'].minigame.spells['hand of fate'];
 				fthof.win = function () {
 					console.log('code running')
@@ -806,69 +829,10 @@ Game.registerMod("CYOC", {
 			if (Game.Objects['Bank'].minigameLoaded && !Game.updateBank) {
 				let M = Game.Objects['Bank'].minigame;
 
-				M.draw = function () {
-					//run each draw frame
+				eval('M.draw=' + M.draw.toString().replace(`if (M.officeLevel<=1) l('bankLoan1').style.display='none';`, `if (M.officeLevel <= 1 || Game.hasBadge('Loans aren\\'t real')) { l('bankLoan1').style.display = 'none'; }`));
+				eval('M.draw=' + M.draw.toString().replace(`if (M.officeLevel<=3) l('bankLoan2').style.display='none';`, `if (M.officeLevel <= 3 || Game.hasBadge('Loans aren\\'t real')) { l('bankLoan2').style.display = 'none'; }`));
+				eval('M.draw=' + M.draw.toString().replace(`if (M.officeLevel<=4) l('bankLoan3').style.display='none';`, `if (M.officeLevel <= 4 || Game.hasBadge('Loans aren\\'t real')) { l('bankLoan3').style.display = 'none'; }`));
 
-					if (Game.drawT % 2 == 0 && M.toRedraw > 0 && M.graph && M.graphCtx) {
-						if (M.lastTickDrawn < M.ticks - 1) M.toRedraw = 2;
-						M.lastTickDrawn = M.ticks;
-						M.drawGraph(M.toRedraw == 2 ? true : false);
-
-						for (var i = 0; i < M.goodsById.length; i++) {
-							var me = M.goodsById[i];
-							var val = M.goodDelta(me.id);
-							me.symbolNumL.innerHTML = val + '' + (val == Math.floor(val) ? '.00' : (val * 10) == Math.floor(val * 10) ? '0' : '') + '%'/*+', '+['stable','slow rise','slow fall','fast rise','fast fall','chaotic'][me.mode]*/;
-							if (val >= 0) { me.symbolNumL.classList.add('bankSymbolUp'); me.symbolNumL.classList.remove('bankSymbolDown'); }
-							else if (val < 0) { me.symbolNumL.classList.remove('bankSymbolUp'); me.symbolNumL.classList.add('bankSymbolDown'); }
-							else { me.symbolNumL.classList.remove('bankSymbolUp'); me.symbolNumL.classList.remove('bankSymbolDown'); }
-
-							me.valL.innerHTML = '$' + Beautify(me.val, 2);
-							me.stockL.innerHTML = Beautify(me.stock);
-							//if (me.stock>0) me.stockL.style.color='#fff';
-							//else me.stockL.style.removeProperty('color');
-							if (me.stock > 0) me.stockBoxL.classList.add('green');
-							else me.stockBoxL.classList.remove('green');
-							me.stockMaxL.innerHTML = '/' + Beautify(M.getGoodMaxStock(me));
-
-							me.graphIconL.style.transform = 'translate(-8px,' + Math.floor((M.graph.height - me.vals[0] * M.graphScale)) + 'px) scale(0.5)';
-						}
-						M.toRedraw = 0;
-					}
-					if (Game.drawT % 10 == 0) {
-						var office = M.offices[M.officeLevel];
-						l('bankOfficeIcon').style.backgroundPosition = (-office.icon[0] * 48) + 'px ' + (-office.icon[1] * 48) + 'px';
-						l('bankOfficeName').innerHTML = office.name;
-						l('bankOfficeUpgrade').innerHTML = EN ? 'Upgrade (' + office.cost[0] + ' cursors)' : loc("Upgrade for %1", office.cost[0] + ' ' + Game.Objects['Cursor'].plural);
-						if (!office.cost) l('bankOfficeUpgrade').style.display = 'none';
-						else {
-							l('bankOfficeUpgrade').style.removeProperty('display');
-							if (Game.Objects['Cursor'].amount >= office.cost[0] && Game.Objects['Cursor'].level >= office.cost[1]) l('bankOfficeUpgrade').classList.remove('bankButtonOff');
-							else l('bankOfficeUpgrade').classList.add('bankButtonOff');
-						}
-						l('bankBrokersText').innerHTML = EN ? (M.brokers == 0 ? 'no brokers' : M.brokers == 1 ? '1 broker' : (M.brokers + ' brokers')) : (loc("Brokers:") + ' ' + M.brokers);
-						if (M.brokers < M.getMaxBrokers() && Game.cookies >= M.getBrokerPrice()) l('bankBrokersBuy').classList.remove('bankButtonOff');
-						else l('bankBrokersBuy').classList.add('bankButtonOff');
-
-						if (M.officeLevel <= 1 || Game.hasBadge('Loans aren\'t real')) l('bankLoan1').style.display = 'none';
-						else l('bankLoan1').style.removeProperty('display');
-						if (M.officeLevel <= 3 || Game.hasBadge('Loans aren\'t real')) l('bankLoan2').style.display = 'none';
-						else l('bankLoan2').style.removeProperty('display');
-						if (M.officeLevel <= 4 || Game.hasBadge('Loans aren\'t real')) l('bankLoan3').style.display = 'none';
-						else l('bankLoan3').style.removeProperty('display');
-
-						for (var id = 1; id < 4; id++) {
-							if (Game.hasBuff('Loan ' + id) || Game.hasBuff('Loan ' + id + ' (interest)')) l('bankLoan' + id).classList.add('bankButtonOff');
-							else l('bankLoan' + id).classList.remove('bankButtonOff');
-						}
-
-						var it = l('bankBalance');
-						it.innerHTML = (M.profit < 0 ? '-' : '') + '$' + Beautify(Math.abs(M.profit), 2);
-						if (M.profit > 0) { it.classList.add('bankSymbolUp'); it.classList.remove('bankSymbolDown'); }
-						else if (M.profit < 0) { it.classList.add('bankSymbolDown'); it.classList.remove('bankSymbolUp'); }
-
-						l('bankNextTick').innerHTML = loc("Next tick in %1.", Game.sayTime((Game.fps * M.secondsPerTick) - M.tickT + 30, -1));
-					}
-				}
 				Game.updateBank = 0;
 			}
 		});
@@ -892,7 +856,7 @@ Game.registerMod("CYOC", {
 		for (let i in Game.Objects) { // what a mess
 			let me = Game.Objects[i];
 			me.getPrice = function () {
-				var price = this.basePrice * Math.pow(Game.priceIncrease, Math.max(0, Game.hasBadge('The house market') ? this.bought - this.amount : this.amount - this.free));
+				var price = this.basePrice * Math.pow(Game.priceIncrease, Math.max(0, Game.hasBadge('The house market') ? this.bought - this.free : this.amount - this.free));
 				price = Game.modifyBuildingPrice(this, price);
 				return Math.ceil(price);
 			}
@@ -908,7 +872,7 @@ Game.registerMod("CYOC", {
 
 		eval(`Game.ClickCookie=` + Game.ClickCookie.toString().replace(`Game.loseShimmeringVeil('click');`, `else if (Game.hasBadge('Fast clicker')) return; Game.loseShimmeringVeil('click');`));
 
-		eval(`Game.NewUpgradeCookie=` + Game.NewUpgradeCookie.toString().replace(`if (!obj.locked) Game.UnlockAt.push(toPush);`,`if (!obj.locked || Game.hasBadge('Dough outage')) Game.UnlockAt.push(toPush);`));
+		eval(`Game.NewUpgradeCookie=` + Game.NewUpgradeCookie.toString().replace(`if (!obj.locked) Game.UnlockAt.push(toPush);`, `if (!obj.locked || Game.hasBadge('Dough outage')) Game.UnlockAt.push(toPush);`));
 
 		Game.cyocReset = function () {
 			Game.updateGrimoire = 0;
@@ -916,10 +880,25 @@ Game.registerMod("CYOC", {
 		}
 		Game.registerHook('reset', Game.cyocReset);
 
-		Game.cyocClick = function() {
+		Game.cyocClick = function () {
 			if (Game.cookieClicks >= 1000 && Game.hasBadge('Fragile cookie')) Game.Ascend(1);
 		}
 		Game.registerHook('click', Game.cyocClick);
+
+		window.addEventListener('keydown', function(e) {
+			if (e.keyCode == 85 && Game.debugCYOC) Game.selectChallange();
+		})
+	},
+	save: function () {
+		let str = "";
+		for (let i of Game.BadgesById) { str += i.got; } 
+		return str;
+	},
+	load: function (str) {
+		console.log(str);
+		for (let i in Game.BadgesById) { Game.BadgesById[i].got = Number(str[i]);
+			if (Game.BadgesById[i].clickFunction && Game.BadgesById[i].got > 0) Game.BadgesById[i].clickFunction();
+		}
 	}
 });
-Game.selectChallange();
+//Game.selectChallange();
