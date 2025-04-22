@@ -513,7 +513,7 @@ Game.registerMod("CYOC", {
 			}
 
 			//PauseGame();
-			Game.Prompt('<h3>Pick an upgrade to make permanent</h3>' +
+			Game.Prompt('<h3>Pick a debuff</h3>' +
 				'<div class="line"></div><div style="margin:4px auto; clear:both; width:120px;"></div>' +
 				'<div class="block crateBox" style="overflow-y:scroll; float:left;clear:left;width:500px;padding:0px;height:250px;">' + badges + '</div>'
 				, [["Confirm", 'Game.ClosePrompt(); '], "Cancel"], 0, 'widePrompt');
