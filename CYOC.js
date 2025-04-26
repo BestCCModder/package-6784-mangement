@@ -164,7 +164,7 @@ Game.registerMod("CYOC", {
 			if (Game.sesame) {
 				if (Game.debuggedUpgradeCpS[me.name] || Game.debuggedUpgradeCpClick[me.name]) {
 					text.push('x' + Beautify(1 + Game.debuggedUpgradeCpS[me.name], 2)); text.push(Game.debugColors[Math.floor(Math.max(0, Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpS[me.name] / 2, 0.5) * Game.debugColors.length)))]);
-					text.push	('x' + Beautify(1 + Game.debuggedUpgradeCpClick[me.name], 2)); text.push(Game.debugColors[Math.floor(Math.max(0, Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpClick[me.name] / 2, 0.5) * Game.debugColors.length)))]);
+					text.push('x' + Beautify(1 + Game.debuggedUpgradeCpClick[me.name], 2)); text.push(Game.debugColors[Math.floor(Math.max(0, Math.min(Game.debugColors.length - 1, Math.pow(Game.debuggedUpgradeCpClick[me.name] / 2, 0.5) * Game.debugColors.length)))]);
 				}
 				if (Game.extraInfo) { text.push(Math.floor(me.order) + (me.power ? '<br>P:' + me.power : '')); text.push('#fff'); }
 			}
@@ -393,7 +393,7 @@ Game.registerMod("CYOC", {
 			}
 			else {
 				Game.removeBadge(this.name);
-				if (!Game.hasBadge(' ')) {[...Game.l.children].forEach(el => el.style.removeProperty('opacity'));}
+				if (!Game.hasBadge(' ')) { [...Game.l.children].forEach(el => el.style.removeProperty('opacity')); }
 			}
 			if (Game.onMenu == 'stats') Game.UpdateMenu();
 			Game.selectChallange();
@@ -414,7 +414,7 @@ Game.registerMod("CYOC", {
 			Game.Objects[i].debuffBadges = [];
 		}
 
-		Game.getBuildingDebuffIcon=function(icon) {
+		Game.getBuildingDebuffIcon = function (icon) {
 			return [icon, 3, img];
 		}
 
@@ -443,12 +443,12 @@ Game.registerMod("CYOC", {
 			return mult;
 		}
 
-        Game.badgeValue = function () {
+		Game.badgeValue = function () {
 			let value = 0
 			for (let i in Game.Badges) {
 				if (Game.Badges[i].got) value += Game.Badges[i].value;
 			}
-		    return value;
+			return value;
 		}
 		eval('Game.computeLumpTimes=' + Game.computeLumpTimes.toString().replace(`Game.lumpOverripeAge/=2000;}`, `Game.lumpOverripeAge/=2000;} Game.lumpRipeAge-=6000 * Game.badgeValue();`));
 
@@ -487,6 +487,7 @@ Game.registerMod("CYOC", {
 		new Game.Badge('Squirrel', 'Godzamok is <b>25%</b> weaker.', [0, 0]); // implemented
 		new Game.Badge('Fragile cookie', 'Ascend after Clicking the big cookie 1000 times.', [0, 0]); // implemented
 		new Game.Badge('Dough outage', 'Can\'t unlock most cookies', [0, 0]); // implemented
+		new Game.Badge('Game show', 'Upon reincarnation a Game show will start, failing to pass will lose you a heavenly upgrade.', [0, 0]); // implemented
 
 		//new Game.Badge()
 		LocalizeUpgradesAndAchievs();
@@ -743,9 +744,19 @@ Game.registerMod("CYOC", {
 		new Game.audioCaptcha('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/audioCaptcha50.mp3', 'are you having fun');
 
 		setInterval(function () {
-			if (Game.hasBadge('The voices')) PlaySound("https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/babyShark.mp3");
+			if (Game.hasBadge('The voices') && !Game.quizState) PlaySound("https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/babyShark.mp3");
 			console.log("code running");
 		}, 96400);
+
+		Game.stopPain = function(url) {
+			for (let i = 0; i < SoundInsts.length; i++) {
+				if (SoundInsts[i] && !SoundInsts[i].paused && SoundInsts[i].src == url) {
+					SoundInsts[i].pause();
+					SoundInsts[i].currentTime = 0;
+					break;
+				}
+			}
+		}
 
 		Game.showCaptcha = function () {
 			let list = [];
@@ -767,12 +778,117 @@ Game.registerMod("CYOC", {
 		}
 
 		Game.doCaptcha = function () {
-			if (Game.T % (Game.fps * 20) == 0 && Game.hasBadge('The voices') && Math.random() < 1 / 5) {
+			if (Game.T % (Game.fps * 20) == 0 && Game.hasBadge('The voices') && !Game.quizState && Math.random() < 1 / 5) {
 				Game.showCaptcha();
 				console.log("code running");
 			}
 		}
 		Game.registerHook('logic', Game.doCaptcha);
+
+		Game.quizState = 0;
+		Game.correctAnswer = 0;
+		Game.quizzes = {};
+		Game.quizById = [];
+		Game.quizN = 0;
+		Game.quiz = function (question, answer) {
+			this.id = Game.quizN;
+			this.question = question;
+			this.answer = answer;
+
+			Game.quizzes[this.question] = this;
+			Game.quizById[this.id] = this;
+			Game.quizN++;
+			return this;
+		}
+
+		// define the quizzes
+        new Game.quiz('What is the name of the upgrade that unlocks 100% of the potential of your prestige level?', 'heavenly key');
+		new Game.quiz('At how many achievements do you unlock chocolate milk?', '25');
+		new Game.quiz(`How many wrinklers can eat the big cookie at once? <br>1. 10 <br>2. 12 <br>3. 14`, '3');
+		new Game.quiz('How many sugar lumps are required to 100% the game?', '1123');
+		new Game.quiz('Is You the last building in the game (yes/no)?', 'yes');
+		new Game.quiz(`Where can you see the forgotten madeleine? <br>1. Bottom left of the stats tab <br>2. Bottom right of the option tab <br>3. Bottom right of the info tab`, '3');
+		new Game.quiz('How many lump types are there?', '5');
+		new Game.quiz('Am I the best CC modder?', 'no');
+		new Game.quiz('How many plantable, non-immortal seeds are there?', '31');
+		new Game.quiz('How long is the ascend animation <br>1. 5s <br>2. 4s <br>3. 3s ', '1');
+		new Game.quiz('What is Spontaneous Edifice building giving limit?', '400');
+		new Game.quiz('What\'s 9+10', '21');
+		new Game.quiz('Who made this mod? <br>1. CursedSliver <br>2. Helloperson <br>3. Yeetdragon <br>4. Omar uvu', '4');
+		new Game.quiz('How many permanent upgrade slots are there?', '5');
+		new Game.quiz('What\'s the max number that can appear in the 1 hour of CpS fortune?', '99');
+		new Game.quiz('What\'s the id of the last spell added to grimoire?', '18');
+		new Game.quiz('I will ask a really easy question. Is CSS good?', 'no');
+		new Game.quiz('What is the name of the highest level rank in dashnet\'s discord server', 'ruby chocolate dragon');
+		new Game.quiz('which of these versions added ascension: <br>1.  v. 1.05 <br>2. v.1.0501 <br>3. v. 1.9', '1');
+		new Game.quiz('Who is the best Cookie Clicker player?', '3+4i');
+		new Game.quiz('How many golden cookie clicks do you need for seven horseshoes achievement?', '27777');
+		new Game.quiz('What is the value of Game.fps', '30');
+		new Game.quiz('How many seasons are there?', '5');
+		new Game.quiz('Which season increases golden cookie spawn rate the most? <br>1. Halloween <br>2. Business day <br>3. Easter', '2');
+		new Game.quiz('What version added krumblor?', 'v. 1.9');
+		new Game.quiz('How many Buildings did v. 1.032 have?', '9');
+		new Game.quiz('Imagine you were Omar, modding CC. VS code crashed, you lost all your prgress. What do you do? <br>1. Rage quit and cancel the mod <br>2. Work from the last saved version (it was two weeks ago) <br>3. Try to somehow recover the file <br>4. Pull from the github repo (this one is also two weeks ago, but 4 hours later)', '1');
+		new Game.quiz('How many pledges are required to unlock sacrificial rolling pins?', '10');
+		new Game.quiz('What\'s the max value of heralds', '100');
+		new Game.quiz('Which of the following golden cookie effects can you not spawn from the debug menu? <br>1. Sweet <br>2. Everything must go <br>3. Cursed finger', '2');
+		new Game.quiz('How many loans are there <br>1. 3 <br>2. 0 <br>3. 2', '2');
+		new Game.quiz('What\'s the value of meaty lumps in code?', '3');
+		new Game.quiz('I have 9 CpS. What is the min number of buildings I could have?', '0');
+		new Game.quiz('What\'s the chance of fortune appearing in news, with O Fortuna achievement?', '4%');
+		new Game.quiz('What is Omar\'s favorite version?', 'v 1.9');
+		new Game.quiz('Jimmy has all heavenly upgrades and decides to go through his upgrades list to count the number of tiered building upgrades that display the unshackled subtext below the upgrade name and above the upgrade description. Assuming Jimmy also has all the upgrades, what is the number that he counts', '284');
+		new Game.quiz('What is the default volume precent of the game?', '75%');
+		new Game.quiz('What does CYOC stand for?', 'choose your own challenge');
+		new Game.quiz('1+1=?', '2');
+		new Game.quiz('When was CC released (year)?', '2013');
+		new Game.quiz('Do you like this mod? Hint: there is one correct answer (yes/no).', 'yes');
+		new Game.quiz('How many garden plants have names which are 2 words?', '9');
+		new Game.quiz('It is Wednesday, December 31, 1969 at 16:16:40.000 in GMT-8 (Pacific Standard Time). Or at least according to Jimmy\'s computer. Jimmy harvests a ripe lump, 0 milliseconds passing during this action. He has Dragon\'s Curve and Radiant Appetite slotted, and is in Easter season. Jimmy has also just finished WWWWW, and has 999,999 spells cast. He decides to cast gambler\'s fever dream again, because why not. It turns out, gambler\'s fever dream casts Force the Hand of Fate, which spawns a wrath cookie on the left edge of the building buying section. Which of the following outcomes does Jimmy hope to receive from clicking the wrath cookie, so that his current lump type could be a golden lump? <br>1. Ruin <br>2. Free sugar lump <br>3. Blab <br>4. Elder frenzy ', '3');
+		new Game.quiz('How long is the soil swapping cooldown> <br>1. 5 min <br>2. 10 min <br>3. 15 min', '2');
+		new Game.quiz('Jimmy\'s morally grey twin sister Mimmy decides to perform a prank on her brother. She replaces the chocolate egg source code with chocolate \"egg\", which grants 0.9% of bank. What is the reduction in earning from Jimmy\'s next combo in percent? Round your answer to 1 decimal. <br>1. 3.9% <br>2. 4.1% <br>3. 9.8% ', '1');
+		new Game.quiz('How many upgrades have the Self-referential tier?', '2');
+		new Game.quiz('How many garden drop <b>cookies</b> are there?', '5');
+		new Game.quiz('Dragonflight overrides an existing click frenzy how much of the time?', '80%');
+		new Game.quiz('What\'s the chance of "building special" getting pushed to Force the Hands of Fate pool?', '25%');
+		new Game.quiz('This is a free one, don\'t type anything.', '');
+
+		Game.startQuiz = function (quiz) {
+			Game.quizState = 1;
+
+			if (Game.hasBadge('The voices')) Game.stopPain('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/babyShark.mp3');
+
+			if (quiz == 1) {
+			    PlaySound('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3');
+
+				Game.loopMusic = setInterval(function () {
+					PlaySound('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3');
+				}, 47175);
+			}
+	
+			let list = [];
+			for (let i in Game.quizzes) {
+				list.push(Game.quizzes[i]);
+			}
+			let chooseQuestion = choose(list);
+
+		    let list2 = [];
+			for (let i in Game.Upgrades) {
+				if (Game.Upgrades[i].pool == 'prestige' && Game.Has(Game.Upgrades[i].name)) list2.push(Game.Upgrades[i]);
+			}
+			let chosenUpgrade = choose(list2);
+			let upgradeId = chosenUpgrade.id;
+
+			if (quiz == 1) {
+			    Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">'+ chooseQuestion.question +'</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>',[['Confirm','if (l(\'answerInput\').value.trim().toLowerCase() === "'+ chooseQuestion.answer.toLowerCase() +'") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } Game.startQuiz(2);'],]);
+			}
+			if (quiz == 2) {
+				Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">'+ chooseQuestion.question +'</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>',[['Confirm','if (l(\'answerInput\').value.trim().toLowerCase() === "'+ chooseQuestion.answer.toLowerCase() +'") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } Game.startQuiz(3);'],]);
+			}
+			if (quiz == 3) {
+			    Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">'+ chooseQuestion.question +'</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>',[['Confirm','if (l(\'answerInput\').value.trim().toLowerCase() === "'+ chooseQuestion.answer.toLowerCase() +'") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } if (Game.correctAnswer < 2) {Game.UpgradesById[' + upgradeId + '].unearn();} Game.ClosePrompt(); Game.quizState = 0; clearInterval(Game.loopMusic); Game.stopPain(\'https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3\'); Game.correctAnswer = 0;'],]);
+			}
+		}
 
 		Game.shimmerTypes['golden'].spawnConditions = function () {
 			if (Game.hasBadge('something 11')) {
@@ -847,7 +963,6 @@ Game.registerMod("CYOC", {
 					eval(`Game.Objects[i].sell = ` + Game.Objects[i].sell.toString().replace(`sold*0.01`, `Game.hasBadge('Squirrel') ? sold*0.0075 : sold*0.01`));
 					eval(`Game.Objects[i].sell = ` + Game.Objects[i].sell.toString().replace(`sold*0.005`, `Game.hasBadge('Squirrel') ? sold*0.0038 : sold*0.005`));
 					eval(`Game.Objects[i].sell = ` + Game.Objects[i].sell.toString().replace(`sold*0.0025`, `Game.hasBadge('Squirrel') ? sold*0.0018 : sold*0.0025`));
-
 				}
 				Game.updateTemple = 0;
 			}
@@ -880,25 +995,38 @@ Game.registerMod("CYOC", {
 		}
 		Game.registerHook('reset', Game.cyocReset);
 
+		Game.cyocReincarnate = function () {
+			if (Game.hasBadge('Game show')) Game.startQuiz(1);
+		}
+		Game.registerHook('reincarnate', Game.cyocReincarnate);
+
 		Game.cyocClick = function () {
 			if (Game.cookieClicks >= 1000 && Game.hasBadge('Fragile cookie')) Game.Ascend(1);
 		}
 		Game.registerHook('click', Game.cyocClick);
 
-		window.addEventListener('keydown', function(e) {
+		window.addEventListener('keydown', function (e) {
 			if (e.keyCode == 85 && Game.debugCYOC) Game.selectChallange();
 		})
 	},
 	save: function () {
 		let str = "";
-		for (let i of Game.BadgesById) { str += i.got; } 
+		for (let i of Game.BadgesById) { str += i.got; }
+		str += '|';
+		str += Game.quizState;
 		return str;
 	},
 	load: function (str) {
 		console.log(str);
-		for (let i in Game.BadgesById) { Game.BadgesById[i].got = Number(str[i]);
+		for (let i in Game.BadgesById) {
+			Game.BadgesById[i].got = Number(str[i]);
 			if (Game.BadgesById[i].clickFunction && Game.BadgesById[i].got > 0) Game.BadgesById[i].clickFunction();
 		}
+		str = str.split('|');
+		strIn = str[1];
+	    Game.quizState = parseFloat(str[1]);
+		if (strIn[0]) {Game.quizState = parseFloat(strIn[0]); }
+		if (Game.quizState) Game.startQuiz(1);
 	}
 });
 //Game.selectChallange();
