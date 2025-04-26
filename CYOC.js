@@ -50,11 +50,11 @@ Game.registerMod("CYOC", {
 	init: function () {
 		Game.LoadMod("https://glander.club/asjs/qdNgUW9y");
 
-		var ModStylesheet = document.createElement("link");
+		/*var ModStylesheet = document.createElement("link");
 		ModStylesheet.setAttribute("href", "ModStyle.css");
 		ModStylesheet.type = 'text/css';
 		ModStylesheet.rel = 'stylesheet';
-		document.head.appendChild(ModStylesheet);
+		document.head.appendChild(ModStylesheet);*/
 
 		img = "https://bestccmodder.github.io/package-6784-mangement/img/cyocIcons.png";
 
