@@ -10,7 +10,6 @@ var PlaySound = function (url, vol, pitchVar) {
 		//sound isn't loaded, cache it
 		Sounds[url] = new Audio(url.indexOf('snd/') == 0 ? (Game.resPath + url) : url);
 		Sounds[url].onloadeddata = function (e) { PlaySound(url, vol, pitchVar); }
-		//Sounds[url].load();
 	}
 	else if (Sounds[url].readyState >= 2) {
 		let sound = null;
@@ -21,9 +20,6 @@ var PlaySound = function (url, vol, pitchVar) {
 			}
 		}
 		if (!sound) sound = new Audio();
-		//var sound = SoundInsts[SoundI];
-		//SoundI++;
-		//if (SoundI >= 12) SoundI = 0;
 		sound.src = Sounds[url].src;
 		sound.currentTime = 0;
 		sound.volume = Math.pow(volume * volumeSetting / 100, 2);
@@ -50,13 +46,14 @@ Game.registerMod("CYOC", {
 	init: function () {
 		Game.LoadMod("https://glander.club/asjs/qdNgUW9y");
 
-		/*var ModStylesheet = document.createElement("link");
+		var ModStylesheet = document.createElement("link");
 		ModStylesheet.setAttribute("href", "ModStyle.css");
 		ModStylesheet.type = 'text/css';
 		ModStylesheet.rel = 'stylesheet';
-		document.head.appendChild(ModStylesheet);*/
+		document.head.appendChild(ModStylesheet);
 
-		img = "https://bestccmodder.github.io/package-6784-mangement/img/cyocIcons.png";
+		var img = "https://bestccmodder.github.io/package-6784-mangement/img/cyocIcons.png";
+		//var img = "img/cyocIcons.png";
 
 		LocalizeUpgradesAndAchievs = () => {
 			if (!Game.UpgradesById) return false;
@@ -82,6 +79,8 @@ Game.registerMod("CYOC", {
 			}
 			BeautifyAll();
 		}
+
+		Game.originalAura = Game.dragonAuras['1'];
 
 		/*=====================================================================================
 		Badge UI
@@ -355,6 +354,8 @@ Game.registerMod("CYOC", {
 			this.click = function () {
 				if (this.clickFunction) this.clickFunction();
 			}
+			//this.disableFunction = disableFunction;
+
 			Game.last = this;
 			Game.Badges[this.name] = this;
 			Game.BadgesById[this.id] = this;
@@ -393,7 +394,8 @@ Game.registerMod("CYOC", {
 			}
 			else {
 				Game.removeBadge(this.name);
-				if (!Game.hasBadge(' ')) { [...Game.l.children].forEach(el => el.style.removeProperty('opacity')); }
+				if (this.disableFunction) this.disableFunction();
+				//if (!Game.hasBadge(' ')) { [...Game.l.children].forEach(el => el.style.removeProperty('opacity')); }
 			}
 			if (Game.onMenu == 'stats') Game.UpdateMenu();
 			Game.selectChallange();
@@ -476,18 +478,20 @@ Game.registerMod("CYOC", {
 		Game.badgeBuildingDebuff('something8', 'Idleverses are <b>twice</b> as inefficient.', 'Idleverse', 22);
 		Game.badgeBuildingDebuff('something9', 'Cortex bakers are <b>twice</b> as inefficient.', 'Cortex baker', 23);
 		Game.badgeBuildingDebuff('something10', 'You are <b>twice</b> as inefficient.', 'You', 24);
+		new Game.Badge('Lactos intolerance', 'All kitten upgrades are locked.', [18, 3, img]); Game.last.clickFunction = function () { delete Game.dragonAuras['1']; }; Game.last.disableFunction = function () { Game.dragonAuras['1'] = Game.originalAura; };
 		new Game.Badge('The voices', 'Baby shark plays for the duration of the whole run. Every once in awhile an audio clip will play, failling to complete the captcha will result in you losing an upgrade ', [0, 0]); Game.last.value = 8; // implemented
 		new Game.Badge('Inflation', 'All upgrades are <b>10</b> more expensive.', [0, 0]); Game.last.value = 2; // implemented
 		new Game.Badge('something 11', 'Golden cookies only appear in <b>Christmas</b>, reindeer appear in <b>every season</b> instead.', [0, 0]); Game.last.value = 4; // implemented
 		new Game.Badge('The house market', 'Buildings don\'t <b>decrease</b> in value no matter what.', [0, 0]); Game.last.value = 6; // implemented
-		new Game.Badge(' ', 'When selected, the game becomes invisible, except for tooltips and prompts.', [0, 0]); Game.last.clickFunction = function () { [...Game.l.children].forEach(el => el.style.opacity = Number(el.id == 'tooltipAnchor' || el.id == 'promptAnchor')); }; Game.last.value = 10; // good luck
-		new Game.Badge('The house market', 'Buildings don\'t <b>decrease</b> in value no matter what.', [0, 0]); // implemented
+		new Game.Badge(' ', 'When selected, the game becomes invisible, except for tooltips and prompts.', [0, 0]); Game.last.clickFunction = function () { [...Game.l.children].forEach(el => el.style.opacity = Number(el.id == 'tooltipAnchor' || el.id == 'promptAnchor')); }; Game.last.disableFunction = function () { [...Game.l.children].forEach(el => el.style.removeProperty('opacity')); }; Game.last.value = 10; // good luck
 		new Game.Badge('Loans aren\'t real', 'You can\'t get loans.<q>Loans in Cookie Clicker? What are you talking about?', [0, 0]); // implemented
 		new Game.Badge('Fast clicker', 'Clicking slower than 15 clicks per second won\'t register to the big cookie.', [0, 0]); // implemented
 		new Game.Badge('Squirrel', 'Godzamok is <b>25%</b> weaker.', [0, 0]); // implemented
 		new Game.Badge('Fragile cookie', 'Ascend after Clicking the big cookie 1000 times.', [0, 0]); // implemented
 		new Game.Badge('Dough outage', 'Can\'t unlock most cookies', [0, 0]); // implemented
 		new Game.Badge('Game show', 'Upon reincarnation a Game show will start, failing to pass will lose you a heavenly upgrade.', [0, 0]); // implemented
+		new Game.Badge('Liquid nitrogen', 'Freezing the garden can randomly kill a plant.', [24, 2, img]);
+		new Game.Badge('Building bundle', 'There is a 1% chance when buying a building to buy 200 of every building instead.', [0, 0, img]);
 
 		//new Game.Badge()
 		LocalizeUpgradesAndAchievs();
@@ -603,6 +607,58 @@ Game.registerMod("CYOC", {
 		}
 
 		Game.registerHook('cps', function (cps) { if (Game.hasBadge('Clogged furnace')) return cps * 0.9; else return cps; });
+
+		eval('Game.Logic=' + Game.Logic.toString().replace(`if (Game.milkProgress>=0.5) Game.Unlock('Kitten helpers');
+			if (Game.milkProgress>=1) Game.Unlock('Kitten workers');
+			if (Game.milkProgress>=2) Game.Unlock('Kitten engineers');
+			if (Game.milkProgress>=3) Game.Unlock('Kitten overseers');
+			if (Game.milkProgress>=4) Game.Unlock('Kitten managers');
+			if (Game.milkProgress>=5) Game.Unlock('Kitten accountants');
+			if (Game.milkProgress>=6) Game.Unlock('Kitten specialists');
+			if (Game.milkProgress>=7) Game.Unlock('Kitten experts');
+			if (Game.milkProgress>=8) Game.Unlock('Kitten consultants');
+			if (Game.milkProgress>=9) Game.Unlock('Kitten assistants to the regional manager');
+			if (Game.milkProgress>=10) Game.Unlock('Kitten marketeers');
+			if (Game.milkProgress>=11) Game.Unlock('Kitten analysts');
+			if (Game.milkProgress>=12) Game.Unlock('Kitten executives');
+			if (Game.milkProgress>=13) Game.Unlock('Kitten admins');
+			if (Game.milkProgress>=14) Game.Unlock('Kitten strategists');`, `if (!Game.hasBadge('Lactos intolerance')) { if (Game.milkProgress>=0.5) Game.Unlock('Kitten helpers');
+			if (Game.milkProgress>=1) Game.Unlock('Kitten workers');
+			if (Game.milkProgress>=2) Game.Unlock('Kitten engineers');
+			if (Game.milkProgress>=3) Game.Unlock('Kitten overseers');
+			if (Game.milkProgress>=4) Game.Unlock('Kitten managers');
+			if (Game.milkProgress>=5) Game.Unlock('Kitten accountants');
+			if (Game.milkProgress>=6) Game.Unlock('Kitten specialists');
+			if (Game.milkProgress>=7) Game.Unlock('Kitten experts');
+			if (Game.milkProgress>=8) Game.Unlock('Kitten consultants');
+			if (Game.milkProgress>=9) Game.Unlock('Kitten assistants to the regional manager');
+			if (Game.milkProgress>=10) Game.Unlock('Kitten marketeers');
+			if (Game.milkProgress>=11) Game.Unlock('Kitten analysts');
+			if (Game.milkProgress>=12) Game.Unlock('Kitten executives');
+			if (Game.milkProgress>=13) Game.Unlock('Kitten admins');
+			if (Game.milkProgress>=14) Game.Unlock('Kitten strategists'); }`)); // if it works it works
+
+		Game.Upgrades['Kitten angels'].showIf = function () { return (!Game.hasBadge('Lactos intolerance')) };
+		Game.Upgrades['Kitten wages'].showIf = function () { return (!Game.hasBadge('Lactos intolerance')) };
+
+		eval('Game.getNewTicker=' + Game.getNewTicker.toString().replace(`Game.HasAchiev('O Fortuna')?0.04:0.02`, `Game.HasAchiev('O Fortuna')?4.04:4.02`));
+
+		eval('Game.getNewTicker=' + Game.getNewTicker.toString().replace(`var fortunes=[];
+				for (var i in Game.Tiers['fortune'].upgrades)
+				{
+					var it=Game.Tiers['fortune'].upgrades[i];
+					if (!Game.HasUnlocked(it.name)) fortunes.push(it);
+				}`, `var fortunes=[];
+				for (var i in Game.Tiers['fortune'].upgrades)
+				{
+					var it=Game.Tiers['fortune'].upgrades[i];
+					if (!Game.HasUnlocked(it.name) && (!Game.hasBadge('Lactos intolerance') || it.name !== 'Fortune #103')) fortunes.push(it);
+				}`));
+
+
+		eval('Game.UpgradeDragon=' + Game.UpgradeDragon.toString().replace(`PlaySound('snd/shimmerClick.mp3');`, `PlaySound('snd/shimmerClick.mp3'); if (Game.hasBadge('Lactos intolerance') && Game.dragonLevel == 4) { return;  }`));
+
+
 
 		Game.shimmerTypes['blackCookie'] = {
 			reset: function () {
@@ -748,7 +804,7 @@ Game.registerMod("CYOC", {
 			console.log("code running");
 		}, 96400);
 
-		Game.stopPain = function(url) {
+		Game.stopPain = function (url) {
 			for (let i = 0; i < SoundInsts.length; i++) {
 				if (SoundInsts[i] && !SoundInsts[i].paused && SoundInsts[i].src == url) {
 					SoundInsts[i].pause();
@@ -802,7 +858,7 @@ Game.registerMod("CYOC", {
 		}
 
 		// define the quizzes
-        new Game.quiz('What is the name of the upgrade that unlocks 100% of the potential of your prestige level?', 'heavenly key');
+		new Game.quiz('What is the name of the upgrade that unlocks 100% of the potential of your prestige level?', 'heavenly key');
 		new Game.quiz('At how many achievements do you unlock chocolate milk?', '25');
 		new Game.quiz(`How many wrinklers can eat the big cookie at once? <br>1. 10 <br>2. 12 <br>3. 14`, '3');
 		new Game.quiz('How many sugar lumps are required to 100% the game?', '1123');
@@ -859,20 +915,20 @@ Game.registerMod("CYOC", {
 			if (Game.hasBadge('The voices')) Game.stopPain('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/babyShark.mp3');
 
 			if (quiz == 1) {
-			    PlaySound('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3');
+				PlaySound('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3');
 
 				Game.loopMusic = setInterval(function () {
 					PlaySound('https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3');
 				}, 47175);
 			}
-	
+
 			let list = [];
 			for (let i in Game.quizzes) {
 				list.push(Game.quizzes[i]);
 			}
 			let chooseQuestion = choose(list);
 
-		    let list2 = [];
+			let list2 = [];
 			for (let i in Game.Upgrades) {
 				if (Game.Upgrades[i].pool == 'prestige' && Game.Has(Game.Upgrades[i].name)) list2.push(Game.Upgrades[i]);
 			}
@@ -880,13 +936,13 @@ Game.registerMod("CYOC", {
 			let upgradeId = chosenUpgrade.id;
 
 			if (quiz == 1) {
-			    Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">'+ chooseQuestion.question +'</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>',[['Confirm','if (l(\'answerInput\').value.trim().toLowerCase() === "'+ chooseQuestion.answer.toLowerCase() +'") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } Game.startQuiz(2);'],]);
+				Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">' + chooseQuestion.question + '</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>', [['Confirm', 'if (l(\'answerInput\').value.trim().toLowerCase() === "' + chooseQuestion.answer.toLowerCase() + '") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } Game.startQuiz(2);'],]);
 			}
 			if (quiz == 2) {
-				Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">'+ chooseQuestion.question +'</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>',[['Confirm','if (l(\'answerInput\').value.trim().toLowerCase() === "'+ chooseQuestion.answer.toLowerCase() +'") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } Game.startQuiz(3);'],]);
+				Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">' + chooseQuestion.question + '</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>', [['Confirm', 'if (l(\'answerInput\').value.trim().toLowerCase() === "' + chooseQuestion.answer.toLowerCase() + '") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } Game.startQuiz(3);'],]);
 			}
 			if (quiz == 3) {
-			    Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">'+ chooseQuestion.question +'</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>',[['Confirm','if (l(\'answerInput\').value.trim().toLowerCase() === "'+ chooseQuestion.answer.toLowerCase() +'") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } if (Game.correctAnswer < 2) {Game.UpgradesById[' + upgradeId + '].unearn();} Game.ClosePrompt(); Game.quizState = 0; clearInterval(Game.loopMusic); Game.stopPain(\'https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3\'); Game.correctAnswer = 0;'],]);
+				Game.Prompt('<h3>Game show!</h3> <noClose> <div class="block" style="text-align:left;">' + chooseQuestion.question + '</div><div class="block"><input type="text" style="text-align:center;width:100%;" id="answerInput" value=""/></div>', [['Confirm', 'if (l(\'answerInput\').value.trim().toLowerCase() === "' + chooseQuestion.answer.toLowerCase() + '") { Game.correctAnswer++; PlaySound(\'snd/spell.mp3\'); } else { PlaySound(\'snd/spellFail.mp3\'); } if (Game.correctAnswer < 2) {Game.UpgradesById[' + upgradeId + '].unearn();} Game.ClosePrompt(); Game.quizState = 0; clearInterval(Game.loopMusic); Game.stopPain(\'https://bestccmodder.github.io/package-6784-mangement/audioCaptcha/swanky.mp3\'); Game.correctAnswer = 0;'],]);
 			}
 		}
 
@@ -968,6 +1024,109 @@ Game.registerMod("CYOC", {
 			}
 		});
 
+		Game.registerHook('check', () => {
+			if (Game.Objects['Temple'].minigameLoaded && !Game.updateTemple) {
+				let temple = Game.Objects['Temple'].minigame;
+				temple.gods['ruin'].desc1 = '<span class="green">' + "Buff boosts clicks by +" + (Game.hasBadge('Squirrel') ? '0.75' : '1') + "% for every building sold for 10 seconds." + '</span>';
+				temple.gods['ruin'].desc2 = '<span class="green">' + "Buff boosts clicks by +" + (Game.hasBadge('Squirrel') ? '0.38' : '0.5') + "% for every building sold for 10 seconds." + '</span>';
+				temple.gods['ruin'].desc3 = '<span class="green">' + "Buff boosts clicks by +" + (Game.hasBadge('Squirrel') ? '0.18' : '0.25') + "% for every building sold for 10 seconds." + '</span>';
+				for (let i in Game.Objects) {
+					eval(`Game.Objects[i].sell = ` + Game.Objects[i].sell.toString().replace(`sold*0.01`, `Game.hasBadge('Squirrel') ? sold*0.0075 : sold*0.01`));
+					eval(`Game.Objects[i].sell = ` + Game.Objects[i].sell.toString().replace(`sold*0.005`, `Game.hasBadge('Squirrel') ? sold*0.0038 : sold*0.005`));
+					eval(`Game.Objects[i].sell = ` + Game.Objects[i].sell.toString().replace(`sold*0.0025`, `Game.hasBadge('Squirrel') ? sold*0.0018 : sold*0.0025`));
+				}
+				Game.updateTemple = 0;
+			}
+		});
+
+		Game.registerHook('check', () => {
+			if (Game.Objects['Farm'].minigameLoaded && !Game.updateGarden) {
+				let M = Game.Objects['Farm'].minigame
+				M.soilsById.soilsById = [];
+				var n = 0;
+				for (var i in M.soils) {
+					M.soils[i].id = n;
+					M.soils[i].key = i;
+					M.soilsById[n] = M.soils[i];
+					n++;
+				}
+
+				M.harvestAll = function (type, mature, mortal) // declaring harvestAll so M.convert works
+				{
+					var harvested = 0;
+					for (var i = 0; i < 2; i++) // we do it twice to take care of whatever spawns on kill
+					{
+						for (var y = 0; y < 6; y++) {
+							for (var x = 0; x < 6; x++) {
+								if (M.plot[y][x][0] >= 1) {
+									var doIt = true;
+									var tile = M.plot[y][x];
+									var me = M.plantsById[tile[0] - 1];
+									if (type && me != type) doIt = false;
+									if (mortal && me.immortal) doIt = false;
+									if (mature && tile[1] < me.mature) doIt = false;
+
+									if (doIt) harvested += M.harvest(x, y) ? 1 : 0;
+								}
+							}
+						}
+					}
+					if (harvested > 0) setTimeout(function () { PlaySound('snd/harvest1.mp3', 1, 0.2); }, 50);
+					if (harvested > 2) setTimeout(function () { PlaySound('snd/harvest2.mp3', 1, 0.2); }, 150);
+					if (harvested > 6) setTimeout(function () { PlaySound('snd/harvest3.mp3', 1, 0.2); }, 250);
+				}
+
+				// i love garden code
+				Game.killPlant = function () {
+					let plant = [];
+					for (let y = 0; y < 6; y++) {
+						for (let x = 0; x < 6; x++) {
+							if (M.plot[y][x][0] >= 1) {
+								plant.push({ x, y });
+								//console.log({ x, y });
+							}
+						}
+					}
+					let { x, y } = choose(plant);
+					M.harvest(x, y);
+				}
+
+				M.tools['freeze'].func = function () {
+					PlaySound('snd/toneTick.mp3');
+					M.freeze = (M.freeze ? 0 : 1);
+					if (M.freeze) {
+						M.computeEffs();
+						PlaySound('snd/freezeGarden.mp3');
+						this.classList.add('on');
+						l('gardenContent').classList.add('gardenFrozen');
+
+						for (let y = 0; y < 6; y++) {
+							for (let x = 0; x < 6; x++) {
+								let tile = M.plot[y][x];
+								if (tile[0] > 0) {
+									let me = M.plantsById[tile[0] - 1];
+									let age = tile[1];
+									if (me.key == 'cheapcap' && Math.random() < 0.15) {
+										M.plot[y][x] = [0, 0];
+										if (me.onKill) me.onKill(x, y, age);
+										M.toRebuild = true;
+									}
+								}
+							}
+						}
+						if (Game.hasBadge('Liquid nitrogen') && Math.random() < 1 / 5) Game.killPlant(); // ik ik. someday i will have a better way of injecting objects
+					}
+					else {
+						M.computeEffs();
+						this.classList.remove('on');
+						l('gardenContent').classList.remove('gardenFrozen');
+					}
+				}
+				M.buildPanel();
+				Game.updateGarden = 0;
+			}
+		});
+
 		for (let i in Game.Objects) { // what a mess
 			let me = Game.Objects[i];
 			me.getPrice = function () {
@@ -982,6 +1141,37 @@ Game.registerMod("CYOC", {
 				}
 				price = Game.modifyBuildingPrice(this, price);
 				return Math.ceil(price);
+			}
+
+			me.buy = function (amount, bypass) {
+				if (Game.buyMode == -1) { this.sell(Game.buyBulk, 1); return 0; }
+				var success = 0;
+				var moni = 0;
+				var bought = 0;
+				if (!amount) amount = Game.buyBulk;
+				if (amount == -1) amount = 1000;
+				for (var k = 0; k < amount; k++) {
+					var price = this.getPrice();
+					if (Game.cookies >= price) {
+						bought++;
+						moni += price;
+						Game.Spend(price);
+						this.amount++;
+						this.bought++;
+						price = this.getPrice();
+						this.price = price;
+						if (this.buyFunction) this.buyFunction();
+						Game.recalculateGains = 1;
+						if (this.amount == 1 && this.id != 0) l('row' + this.id).classList.add('enabled');
+						this.highest = Math.max(this.highest, this.amount);
+						Game.BuildingsOwned++;
+						success = 1;
+						if (!bypass) {
+							if (Math.random() < 1 / 100 && Game.hasBadge('Building bundle')) for (let k in Game.Objects) { Game.Objects[k].buy(200, true); }
+						}
+					}
+				}
+				if (success) { PlaySound('snd/buy' + choose([1, 2, 3, 4]) + '.mp3', 0.75); this.refresh(); }
 			}
 		}
 
@@ -1024,9 +1214,10 @@ Game.registerMod("CYOC", {
 		}
 		str = str.split('|');
 		strIn = str[1];
-	    Game.quizState = parseFloat(str[1]);
-		if (strIn[0]) {Game.quizState = parseFloat(strIn[0]); }
+		Game.quizState = parseFloat(str[1]);
+		if (strIn[0]) { Game.quizState = parseFloat(strIn[0]); }
 		if (Game.quizState) Game.startQuiz(1);
 	}
 });
 //Game.selectChallange();
+//eval('Game.Logic=' + Game.Logic.toString().replace(`if (Game.T%(Game.fps*5)==0 && !Game.mouseDown && (Game.onMenu=='stats' || Game.onMenu=='prefs')) Game.UpdateMenu();`, `//if (Game.T%(Game.fps*5)==0 && !Game.mouseDown && (Game.onMenu=='stats' || Game.onMenu=='prefs')) Game.UpdateMenu();`));
